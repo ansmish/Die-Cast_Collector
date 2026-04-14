@@ -1,0 +1,6 @@
+{
+  "name": "Die-Cast Collector",
+  "description": "A premium collection management app for die-cast car enthusiasts. Scan packaging to identify models and export your collection to Excel.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
+}

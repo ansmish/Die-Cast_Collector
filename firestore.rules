@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: cars
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required) - Owner's UID
+    //   - brand: string (required)
+    //   - modelName: string (required)
+    //   - series: string (optional)
+    //   - year: string (optional)
+    //   - color: string (optional)
+    //   - scale: string (optional)
+    //   - condition: string (optional)
+    //   - packaging: string (optional)
+    //   - imageUrl: string (optional)
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidCar(data) {
+      return data.userId is string &&
+             data.brand is string && data.brand.size() < 100 &&
+             data.modelName is string && data.modelName.size() < 200 &&
+             (!('series' in data) || (data.series is string && data.series.size() < 200)) &&
+             (!('year' in data) || (data.year is string && data.year.size() < 10)) &&
+             (!('color' in data) || (data.color is string && data.color.size() < 50)) &&
+             (!('scale' in data) || (data.scale is string && data.scale.size() < 20)) &&
+             (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() < 2000));
+    }
+
+    match /cars/{carId} {
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId && isValidCar(request.resource.data);
+      allow update: if isAuthenticated() && request.auth.uid == resource.data.userId && request.auth.uid == request.resource.data.userId && isValidCar(request.resource.data);
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+  }
+}

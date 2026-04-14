@@ -1,0 +1,30 @@
+{
+  "entities": {
+    "Car": {
+      "title": "Car",
+      "description": "A die-cast car in the collection",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "brand": { "type": "string", "description": "Manufacturer (e.g., Hot Wheels, Matchbox)" },
+        "modelName": { "type": "string", "description": "Name of the car model" },
+        "series": { "type": "string", "description": "Series name (e.g., HW Screen Time)" },
+        "year": { "type": "string", "description": "Release year" },
+        "color": { "type": "string" },
+        "scale": { "type": "string", "description": "Scale (e.g., 1:64)" },
+        "condition": { "type": "string", "enum": ["Mint", "Near Mint", "Good", "Fair", "Poor"] },
+        "packaging": { "type": "string", "enum": ["Carded", "Loose", "Boxed"] },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "brand", "modelName"]
+    }
+  },
+  "firestore": {
+    "/cars/{carId}": {
+      "schema": "Car",
+      "description": "Collection of die-cast cars"
+    }
+  }
+}
